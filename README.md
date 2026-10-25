@@ -1,5 +1,7 @@
 # Chord Lab
 
+**Play it now: https://lauren.wang/chord-lab/** (Chrome or Edge, with your piano plugged in by USB)
+
 Plug in your piano and play. Chords scroll along a treble staff toward a blue band, one per bar, on a steady beat. Play each chord as it reaches the band. The app picks every next chord for you:
 
 - **↺ again**: a chord you missed or were slow on comes back a few chords later, then less and less often as you get it right.
@@ -11,7 +13,7 @@ Plug in your piano and play. Chords scroll along a treble staff toward a blue ba
 
 Progress is saved in the browser, so next time you start with your tricky chords.
 
-## Run it
+## Run it locally
 
 Use **Chrome or Edge** (Safari and Firefox can't talk to MIDI pianos).
 
