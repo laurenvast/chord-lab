@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chord Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Music&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <span class="brand">Chord Lab</span>
+  <span class="pill" id="levelPill">Level 1</span>
+  <span class="pill" id="tempoPill">♩ = 66</span>
+  <div class="topbar-right">
+    <button type="button" class="pill-btn" id="soundBtn" hidden>Click to turn on sound</button>
+    <span class="device" id="deviceLabel"><span class="dot"></span><span id="deviceName">Computer keys</span></span>
+    <label class="switch">
+      <input type="checkbox" id="waitToggle" checked>
+      <span class="track" aria-hidden="true"></span>
+      Wait for me
+    </label>
+    <button type="button" class="btn" id="stopBtn">Stop</button>
+    <div class="settings-wrap">
+      <button type="button" class="icon-btn" id="settingsBtn" aria-label="Settings">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2" fill="#fff"/><circle cx="15" cy="12" r="2" fill="#fff"/><circle cx="7" cy="18" r="2" fill="#fff"/></svg>
+      </button>
+      <div class="popover" id="settingsPop" hidden>
+        <label class="row"><input type="checkbox" id="setSound"> Beat sound</label>
+        <label class="row"><input type="checkbox" id="setSpeak"> Say the chord name when I get it right</label>
+        <label class="row"><input type="checkbox" id="setNames"> Always show chord names</label>
+        <button type="button" class="link danger" id="resetBtn">Reset my progress</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="stage">
+  <div class="hud">
+    <div class="combo"><span id="combo">×0</span><small>combo</small></div>
+    <div class="beats" id="beats" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    <div class="judge" id="judge" aria-live="polite"></div>
+  </div>
+
+  <section class="lane" id="lane" aria-label="Scrolling staff">
+    <div class="lane-caption">
+      <span>One chord per bar · play it as it reaches the blue band</span>
+      <span class="waiting-note" id="waitingNote" hidden>Waiting for you…</span>
+    </div>
+    <svg id="staff" class="staff" width="100%" role="img" aria-label="Chords on a treble staff, scrolling left"></svg>
+  </section>
+
+  <div class="legend">
+    <span><b class="warn">↺</b> coming back</span>
+    <span><b>≈</b> similar</span>
+    <span><b>★</b> new</span>
+    <span class="muted">Names disappear once you read a chord quickly — that's the goal.</span>
+  </div>
+
+  <div id="keyboard"></div>
+  <p class="keys-hint">No piano? Use your computer keys: <kbd>A</kbd> <kbd>W</kbd> <kbd>S</kbd> <kbd>E</kbd> <kbd>D</kbd> <kbd>F</kbd> <kbd>T</kbd> <kbd>G</kbd> <kbd>Y</kbd> <kbd>H</kbd> <kbd>U</kbd> <kbd>J</kbd> <kbd>K</kbd> = C to C · <kbd>Z</kbd>/<kbd>X</kbd> octave down/up</p>
+</main>
+
+<div class="overlay" id="startOverlay">
+  <div class="card start-card">
+    <div id="startSearching">
+      <svg class="piano-art" width="220" height="110" viewBox="0 0 220 110" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="6" y="40" width="130" height="56" rx="6"/>
+        <path d="M22 40v56M38 40v56M54 40v56M70 40v56M86 40v56M102 40v56M118 40v56"/>
+        <path d="M136 68h22c14 0 14-40 30-40h8"/>
+        <rect x="196" y="20" width="18" height="16" rx="3"/>
+      </svg>
+      <h1>Plug in your piano</h1>
+      <p>Connect it to this computer with a USB cable. It's picked up automatically — nothing to set up.</p>
+      <div class="status"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>Looking for a piano…</div>
+    </div>
+    <div id="startReady" hidden>
+      <div class="found"><span class="dot"></span><span id="foundName">Piano connected</span></div>
+      <h1 class="big">Play any note to start</h1>
+      <p>We'll start easy and adjust as you play — faster when you're nailing it, slower when something's tricky.</p>
+    </div>
+    <div id="startUnsupported" hidden>
+      <h1>This browser can't hear your piano</h1>
+      <p>Open Chord Lab in Chrome or Edge to play with your piano. You can still play with your computer keyboard.</p>
+    </div>
+    <div id="startDenied" hidden>
+      <h1>Piano access is blocked</h1>
+      <p>Allow MIDI devices for this page (the icon in the address bar), then reload. Or play with your computer keyboard.</p>
+    </div>
+    <p class="returning" id="returningNote" hidden>Welcome back — we'll warm up with the chords you found tricky.</p>
+    <p class="alt">No piano nearby? Press <kbd>A</kbd> on your computer keyboard to start.</p>
+  </div>
+</div>
+
+<div class="overlay" id="checkinOverlay" hidden>
+  <div class="card checkin">
+    <h1 id="ciTitle">Nice work</h1>
+    <p id="ciSub" class="muted"></p>
+    <div class="ci-rows">
+      <div class="ci-row"><span class="ci-label">New today</span><div class="chips" id="ciNew"></div></div>
+      <div class="ci-row"><span class="ci-label">Solid</span><div class="chips" id="ciSolid"></div></div>
+      <div class="ci-row"><span class="ci-label">Still tricky</span><div class="chips" id="ciTricky"></div></div>
+    </div>
+    <p class="muted small">Next time you plug in, we'll warm up with the tricky ones.</p>
+    <div class="actions">
+      <button type="button" class="btn primary" id="ciKeep">Keep going</button>
+      <button type="button" class="btn" id="ciDone">Done for today</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/music.js"></script>
+<script src="js/coach.js"></script>
+<script src="js/staff.js"></script>
+<script src="js/input.js"></script>
+<script src="js/keyboard.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
